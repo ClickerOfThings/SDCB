@@ -11,7 +11,8 @@ namespace RPGshechka
     public class Engine
     {
         public static List<string> skills_list = new List<string> { "strength", "defense", "charisma", "barter" }; // скиллы
-        public static void ShowSkills(){ // показать скиллы
+        public static void ShowSkills() // показать скиллы
+        { 
             Console.Clear();
             int n = 0;
             List<int> a = MainClass.player.GetSkills();
@@ -24,17 +25,20 @@ namespace RPGshechka
             Console.WriteLine("\nНажми, чтобы продолжить...");
             Console.ReadKey();
         }
-        public static void ShowInventory(){ // показать инвентарь
+        public static void ShowInventory() // показать инвентарь
+        { 
             Console.Clear();
             Console.WriteLine("Ваш инвентарь:");
-            foreach (Items x in MainClass.player.inventory){
+            foreach (Items x in MainClass.player.inventory)
+            {
                 Console.Write(x.Name);
                 if (x.Up == 0)
                 {
                     Console.WriteLine("\tПросто для красоты, ничего не дает");
                 }
-                else{
-                    Console.WriteLine("\tПлюс к "+x.SkillUp + " на "+x.Up+" стоимостью "+x.cost+". ID "+x.item_id);
+                else
+                {
+                    Console.WriteLine("\tПлюс к " + x.SkillUp + " на " + x.Up + " стоимостью " + x.cost + ". ID " + x.item_id);
                 }
             }
             Console.WriteLine("\nНажмите, чтобы продолжить...");
@@ -43,40 +47,20 @@ namespace RPGshechka
         }
         private static List<Items> trader_items = new List<Items>(); // предметы торговца
         private static bool clearTrader = true; // false - предметы остаются, true - очищается ассортимент
-        public static void Trader(){ // торговец
-            Console.Clear();
-            Console.WriteLine("О, да ты проходи, у меня ассортимент хороший, гляди, чего прикупишь.");
-            Console.Write("У меня каждые 5 минут новый товар поставляется! Но старый, к сожалению, выбрасывать надо. ");
-            if (clearTrader){
-                Console.WriteLine("Ну и как раз у меня новенькое есть!");
-            }
-            else{
-                Console.WriteLine("К сожалению, на данный момент пока ничего нового нет.");
-            }
-            Console.WriteLine("Сейчас, покажу весь ассортимент...");
-            if (clearTrader){
-                trader_items.Clear();
-                Random rand_name = new Random();
-                for (int i = 0; i < 10; i++){
-                    string name = Generator.GenerateWord(rand_name.Next(3, 12));
-                    name = name.First().ToString().ToUpper() + name.Substring(1);
-                    trader_items.Add(new Items(name, skills_list[rand_name.Next(0, skills_list.Count - 1)], rand_name.Next(0, 7), trader:true));
-                    Thread.Sleep(100);
-                }
-                clearTrader = false;
-                Thread clearItems = new Thread(TraderClearTimer);
-                clearItems.Start();
-            }
-
+        public static void Trader() // торговец
+        {
+            // Методы взаимодействия с торгашом
+            //-------------------------------------
             void ShowItems() //показать предметы
             {
                 foreach (Items x in trader_items)
                 {
-                    Console.WriteLine(x.Name + "\tплюс к " + x.SkillUp + " на " + x.Up+ ". ID = " + x.item_id+" СТОИМОСТЬ "+ x.cost);
+                    Console.WriteLine(x.Name + "\tплюс к " + x.SkillUp + " на " + x.Up + ". ID = " + x.item_id + " СТОИМОСТЬ " + x.cost);
                 }
             }
 
-            void sellItems(){ //продать предметы
+            void sellItems() //продать предметы
+            {
                 foreach (Items x in MainClass.player.inventory)
                 {
                     Console.WriteLine(x.Name + "\tплюс к " + x.SkillUp + " на " + x.Up + ". ID = " + x.item_id + " СТОИМОСТЬ " + x.cost);
@@ -121,40 +105,79 @@ namespace RPGshechka
                     MainClass.player.Money = cost;
                     MainClass.player.inventory.Remove(MainClass.player.inventory.Find(x => x.item_id == Convert.ToInt64(choose)));
                     MainClass.player.UpdateSkillInventory();
-                    Console.WriteLine("Вот тебе "+cost+".");
+                    Console.WriteLine("Вот тебе " + cost + ".");
                     Thread.Sleep(1000);
                 }
                 Console.Clear();
             }
-            while (true){
+
+            //-------------------------------------
+
+            Console.Clear();
+            Console.WriteLine("О, да ты проходи, у меня ассортимент хороший, гляди, чего прикупишь.");
+            Console.Write("У меня каждые 5 минут новый товар поставляется! Но старый, к сожалению, выбрасывать надо. ");
+            if (clearTrader)
+            {
+                Console.WriteLine("Ну и как раз у меня новенькое есть!");
+            }
+            else
+            {
+                Console.WriteLine("К сожалению, на данный момент пока ничего нового нет.");
+            }
+            Console.WriteLine("Сейчас, покажу весь ассортимент...");
+            if (clearTrader)
+            {
+                trader_items.Clear();
+                Random rand_name = new Random();
+                for (int i = 0; i < 10; i++)
+                {
+                    string name = Generator.GenerateWord(rand_name.Next(3, 12));
+                    name = name.First().ToString().ToUpper() + name.Substring(1);
+                    trader_items.Add(new Items(name, skills_list[rand_name.Next(0, skills_list.Count - 1)], rand_name.Next(0, 7), trader: true));
+                    Thread.Sleep(100);
+                }
+                clearTrader = false;
+                Thread clearItems = new Thread(TraderClearTimer);
+                clearItems.Start();
+            }
+            while (true)
+            {
                 ShowItems();
                 Thread.Sleep(500);
                 Console.WriteLine("Что купить хочешь?\n(Введите айди предмета, введите 'вых' или 'ext' чтобы выйти)");
                 Console.WriteLine("('sell' или 'прод' - продать свои предметы)");
                 string choose = Console.ReadLine();
-                if (choose == "вых"||choose == "ext"){
+                if (choose == "вых" || choose == "ext")
+                {
                     Console.WriteLine("Ну ладно, приходи еще!");
                     break;
                 }
-                else if (choose == "sell"||choose=="прод"){
+                else if (choose == "sell" || choose == "прод")
+                {
                     Console.Clear();
                     Console.WriteLine("О, ты мне что-то продать хочешь? С радостью выкуплю, только покажи что есть");
                     Console.WriteLine("(Введите айди предмета, введите 'вых' или 'ext' чтобы выйти)\n");
                     sellItems();
                 }
-                else{
+                else
+                {
                     int n = 0;
-                    foreach (Items item in trader_items){
-                        try{
-                        if (item.item_id == Convert.ToInt64(choose)){
-                            n = 0;
-                            break;
+                    foreach (Items item in trader_items) // странная проверка, но она работает только так
+                    {
+                        try
+                        {
+                            if (item.item_id == Convert.ToInt64(choose))
+                            {
+                                n = 0;
+                                break;
+                            }
+                            else
+                            {
+                                n++;
+                            }
                         }
-                        else{
-                            n++;
-                        }
-                        }
-                        catch (FormatException){
+                        catch (FormatException)
+                        {
                             n++;
                             break;
                         }
@@ -166,11 +189,13 @@ namespace RPGshechka
                     }
                     else
                     {
-                        if (trader_items.Find(x => x.item_id == Convert.ToInt64(choose)).cost > MainClass.player.Money){
+                        if (trader_items.Find(x => x.item_id == Convert.ToInt64(choose)).cost > MainClass.player.Money)
+                        {
                             Console.WriteLine("А у тебя денег столько нет!");
                             Thread.Sleep(1000);
                         }
-                        else{
+                        else
+                        {
                             MainClass.player.inventory.Add(trader_items.Find(x => x.item_id == Convert.ToInt64(choose)));
                             int cost = trader_items.Find(x => x.item_id == Convert.ToInt64(choose)).cost * -1;
                             MainClass.player.Money = cost;
@@ -185,14 +210,15 @@ namespace RPGshechka
             }
             Console.ReadKey();
         }
-        private static void TraderClearTimer(){ // очистка ассортимента у торгаша
+        private static void TraderClearTimer() // очистка ассортимента у торгаша
+        { 
             Thread.Sleep(300000);
             clearTrader = true;
             return;
         }
 
-        // данж
-        private static void Dungeon()
+        // TODO - запилить этот сраный данж уже
+        private static void Dungeon() // данж
         {
             Console.Clear();
             Console.Write("Вы собираетесь в данж ");
@@ -205,20 +231,20 @@ namespace RPGshechka
             Thread.Sleep(1000);
             Console.ReadKey();
         }
-        public class Tech
+        public static class Tech
         {
-            protected internal static Dictionary<char, Action> commands = new Dictionary<char, Action> { { 's', Engine.ShowSkills },
+            private static Dictionary<char, Action> commands = new Dictionary<char, Action> { { 's', Engine.ShowSkills },
             {'t',  Engine.Trader}, {'i', Engine.ShowInventory } }; //команды
-            public List<char> list_commands = new List<char>(); // кажется эта хуйня еще не пригодилась, но оставлю
+            public static List<char> list_commands = new List<char>(); // кажется эта хуйня еще не пригодилась, но оставлю //TODO - найти применение или удалить нахер
 
-            public bool endgame = false;
-            public void UpdateScreen() // показатель всей хуйни на главном экране
+            public static bool endgame = false;
+            public static void UpdateScreen() // показатель всей хуйни на главном экране
             {
                 while (true)
                 {
                     Console.WriteLine("Имя: " + MainClass.player.Name);
-                    Console.WriteLine("ЗДР " + MainClass.player.Health + " МАН " + MainClass.player.Mana + " СТМ " + MainClass.player.Stamina+ " ДЕН " + MainClass.player.Money);
-                    if (MainClass.player.CheckLVL() == true)
+                    Console.WriteLine("ЗДР " + MainClass.player.Health + " МАН " + MainClass.player.Mana + " СТМ " + MainClass.player.Stamina + " ДЕН " + MainClass.player.Money);
+                    if (MainClass.player.CheckLVL() == true) // TODO - создать отдельный метод под проверку этой срани на каждые секунд 5
                     {
                         Console.WriteLine("Уровень повышен! Теперь твой уровень " + MainClass.player.LvL);
 
@@ -231,7 +257,7 @@ namespace RPGshechka
                     Console.Clear();
                 }
             }
-            public void AwaitKey() //ожидание команды
+            public static void AwaitKey() //ожидание команды
             {
                 char choose = Console.ReadKey().KeyChar;
                 if (!commands.Keys.Contains(choose))
@@ -242,5 +268,5 @@ namespace RPGshechka
             }
         }
     }
-    
+
 }

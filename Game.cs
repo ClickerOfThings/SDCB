@@ -29,12 +29,12 @@ namespace RPGshechka
             Console.WriteLine("Начальное баблишко: " + player.Money);
             Thread.Sleep(4000);
             Console.Clear();
-            Engine.Tech tech = new Engine.Tech();
-            Thread info = new Thread(tech.UpdateScreen);
+            // Engine.Tech tech = new Engine.Tech(); за временной ненадобностью
+            Thread info = new Thread(Engine.Tech.UpdateScreen);
             info.Start();
             while (true)
             {
-                if (tech.endgame == true)
+                if (Engine.Tech.endgame == true)
                 {
                     break;
                 }
