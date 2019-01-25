@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RandomWordGenerator</name>
+    </assembly>
+    <members>
+        <member name="T:RandomWordGenerator.Dictionaries_Russian">
+            <summary>
+            Класс словаря
+            </summary>
+        </member>
+        <member name="F:RandomWordGenerator.Dictionaries_Russian.rus">
+            <summary>
+            Массив со всеми русскими буквами
+            </summary>
+        </member>
+        <member name="F:RandomWordGenerator.Dictionaries_Russian.zapr">
+            <summary>
+            Массив с "запрещенными" буквами (ъ, ь, ы)
+            </summary>
+        </member>
+        <member name="F:RandomWordGenerator.Dictionaries_Russian.glas">
+            <summary>
+            Массив гласных
+            </summary>
+        </member>
+        <member name="F:RandomWordGenerator.Dictionaries_Russian.sogl">
+            <summary>
+            Массив с согласными
+            </summary>
+        </member>
+        <member name="M:RandomWordGenerator.Dictionaries_Russian.#ctor">
+            <summary>
+            Заполнение словарей буквами
+            </summary>
+        </member>
+        <member name="T:RandomWordGenerator.Generator">
+            <summary>
+            Класс генератора
+            </summary>
+        </member>
+        <member name="M:RandomWordGenerator.Generator.GenerateWord(System.Int32,System.Int64)">
+            <summary>
+            Генератор русского более-менее-читабельного слова
+            </summary>
+            <param name="length">Длина слова</param>
+            <param name="seed">Сид слова (опционально)</param>
+            <returns>Русское слово</returns>
+            <remarks>Положение Ъ и Ь в слове не предусмотрены</remarks>
+        </member>
+    </members>
+</doc>
